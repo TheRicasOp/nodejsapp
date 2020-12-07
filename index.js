@@ -13,7 +13,7 @@ const admin = require('firebase-admin');
  */
 const app = express();
 const port = process.env.PORT || "8000";
-var serviceAccount = require('infinachat-firebase-adminsdk-n6u87-8365e8e835.json');
+var serviceAccount = require('./infinachat-firebase-adminsdk-n6u87-8365e8e835.json');
 
 /**
  *  App Configuration
