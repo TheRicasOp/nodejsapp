@@ -104,13 +104,13 @@ db.collection("chat").get().
 
 //devuelve todos los mensajes de un chat dado un id_chat
 //mensajes
-app.post('/mensajes',(req,res) => {
-  const {id_chat} = req.body;
+app.post('/msj',(req,res) => {
+  const {idchat} = req.body;
   let data = [];
 db.collection("mensajes").get().
   then((snapshot) => {
       snapshot.forEach((doc) => {
-          if (doc.data().id_chat == id_chat) {
+          if (doc.data().id_chat == idchat) {
             data.push(doc.data());
           }
       });
