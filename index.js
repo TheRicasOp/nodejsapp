@@ -65,14 +65,11 @@ app.post('/addUser',(req,res) => {
 //login
 app.post('/login',(req,res) => {
     const {usr,passwd} = req.body;
-    let data = [];
     let band = false;
   db.collection("users").get().
     then((snapshot) => {
         snapshot.forEach((doc) => {
-            //data.push(doc.data().username, doc.data().password);
             if (doc.data().username == usr && doc.data().password == passwd) {
-            //if (data.username === usr && data.password === passwd) {
               band = true;
             } 
         });
@@ -103,7 +100,7 @@ db.collection("chat").get().
 });
 
 //devuelve todos los mensajes de un chat dado un id_chat
-//mensajes
+//getMensajes
 app.post('/getMensajes',(req,res) => {
     const {id} = req.body;
     let data = [];
@@ -120,6 +117,50 @@ app.post('/getMensajes',(req,res) => {
         console.log("Error getting documents", err);
     });
   });
+
+//elimina msj
+app.post('/deleteMsj',(req,res) => {
+  const {id, idm} = req.body;
+  let band = false;
+db.collection("mensajes").get().
+  then((snapshot) => {
+      snapshot.forEach((doc) => {
+          if (doc.data().idchat == id && doc.data().idmsj == idm) {
+            //doc.data().tipo = "Eliminado";
+            doc.data().tipo = 'Eliminado';
+            //doc.data().contenido = "Este mensaje ha sido eliminado";
+            doc.data().contenido = 'Este mensaje ha sido eliminado';
+            band = true;
+          }
+      });
+          res.send({res: band}); //manda un true si se logro eliminar el msj
+      })
+  .catch((err) => {
+      console.log("Error getting documents", err);
+  });
+});
+
+//cambia password
+app.post('/changePass',(req,res) => {
+  const {usr, oldpass, npass} = req.body;
+  let band = false;
+db.collection("mensajes").get().
+  then((snapshot) => {
+      snapshot.forEach((doc) => {
+          if (doc.data().username == usr && doc.data().password == oldpass) {
+            doc.data().password = npass;
+            band = true;
+          }
+      });
+          res.send({res: band}); //manda un true si se logro cambiar la contra
+      })
+  .catch((err) => {
+      console.log("Error getting documents", err);
+  });
+});
+
+//elimina usuario
+
 
 /**
  * Server Activation
