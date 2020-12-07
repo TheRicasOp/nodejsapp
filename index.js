@@ -61,6 +61,27 @@ app.post('/addUser',(req,res) => {
     });
 });
 
+//login
+app.post('/login',(req,res) => {
+    const {usr,passwd} = req.body;
+    let data = [];
+    let band = false;
+  db.collection("users").get().
+    then((snapshot) => {
+        snapshot.forEach((doc) => {
+            //data.push(doc.data().username, doc.data().password);
+            if (doc.data().username == usr && doc.data().password == passwd) {
+            //if (data.username === usr && data.password === passwd) {
+              band = true;
+            } 
+        });
+            res.send({res: band});
+        })
+    .catch((err) => {
+        console.log("Error getting documents", err);
+    });
+  });
+
 /**
  * Server Activation
  */
