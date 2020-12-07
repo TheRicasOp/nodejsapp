@@ -111,6 +111,7 @@ app.post('/getMensajes',(req,res) => {
               data.push(doc.data());
             }
         });
+            data.sort((a, b) => Number(a.idmsj) - Number(b.idmsj));
             res.send(data);
         })
     .catch((err) => {
