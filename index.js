@@ -54,7 +54,7 @@ db.collection("users").get().
 //addUser
 app.post('/addUser',(req,res) => {
     const {usr,passwd} = req.body;
-    db.collection("users").add({user: usr,password: passwd});
+    db.collection("users").add({username: usr,password: passwd});
     res.send({res: 'true'})
     .catch((err) => {
         res.send({res: 'false'});
