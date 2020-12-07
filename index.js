@@ -51,6 +51,16 @@ db.collection("users").get().
   });	
 });
 
+//addUser
+app.post('/addUser',(req,res) => {
+    const {usr,passwd} = req.body;
+    db.collection("users").add({user: usr,password: passwd});
+    res.send({res: 'true'})
+    .catch((err) => {
+        res.send({res: 'false'});
+    });
+});
+
 /**
  * Server Activation
  */
