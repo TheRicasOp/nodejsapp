@@ -61,6 +61,7 @@ app.post('/addUser',(req,res) => {
     });
 });
 
+//checa si coincide usr y pass
 //login
 app.post('/login',(req,res) => {
     const {usr,passwd} = req.body;
@@ -81,6 +82,25 @@ app.post('/login',(req,res) => {
         console.log("Error getting documents", err);
     });
   });
+
+//devuelve los chats que tenga el usuario dado
+//chats
+app.post('/chats',(req,res) => {
+  const {usr} = req.body;
+  let data = [];
+db.collection("chat").get().
+  then((snapshot) => {
+      snapshot.forEach((doc) => {
+          if (doc.data().usuario1 == usr || doc.data().usuario2 == usr) {
+            data.push(doc.data());
+          }
+      });
+          res.send(data);
+      })
+  .catch((err) => {
+      console.log("Error getting documents", err);
+  });
+});
 
 /**
  * Server Activation
