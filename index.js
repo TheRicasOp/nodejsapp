@@ -12,10 +12,20 @@ const admin = require('firebase-admin');
  */
 const app = express();
 const port = process.env.PORT || "8000";
+var serviceAccount = require('./infinachat-firebase-adminsdk-n6u87-8365e8e835.json'); 
 
 /**
  *  App Configuration
  */
+app.use(cors());	
+app.use(body_parser.urlencoded({ extended: false }));	
+app.use(body_parser.json());	
+
+admin.initializeApp({	
+ credential: admin.credential.cert(serviceAccount)	
+});	
+
+const db = admin.firestore();
 
 /**
  * Routes Definitions
@@ -26,6 +36,20 @@ app.get("/", (req, res) => {
   });
 
 //getUsers
+app.get('/getUsers',(req,res) => {	
+  let data = [];	
+db.collection("users").get().	
+  then((snapshot) => {	
+      snapshot.forEach((doc) => {	
+          data.push(doc.data().username);	
+      });	
+
+          res.send(data);	
+      })	
+  .catch((err) => {	
+      console.log("Error getting documents", err);	
+  });	
+});
 
 /**
  * Server Activation
