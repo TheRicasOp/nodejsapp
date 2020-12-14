@@ -119,6 +119,24 @@ app.post('/getMensajes',(req,res) => {
     });
   });
 
+//Agrega mensaje
+app.post('/addMensaje',(req,res) => {
+  const {cont,des,date,chat,msjID,orig,tip} = req.body;
+  db.collection("mensajes").add({
+    contenido: cont,
+    destino: des,
+    fecha: date,
+    idchat: chat,
+    idmsj: msjID,
+    origen: orig,
+    tipo: tip
+  });
+  res.send({res: 'true'})
+  .catch((err) => {
+      res.send({res: 'false'});
+  });
+});
+
 //elimina msj
 app.post('/deleteMsj',(req,res) => {
   const {id, idm} = req.body;
