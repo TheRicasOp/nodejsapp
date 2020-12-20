@@ -169,6 +169,25 @@ db.collection("mensajes").get().
 /**
  * Server Activation
  */
+app.post('/addChat', (req, res) => {
+    const { usr1, usr2 } = req.body;
+    let band = true;
+    db.collection("chat").get().then((snapshot) => {
+        snapshot.forEach((doc) => {
+            if (doc.idchat == usr1 + ',' + usr2 || doc.idchat == usr2 + ',' + usr1)
+                band = false;
+        });
+        if (band) {
+            db.collection('chat').add({ idchat: usr1 + ',' + usr2, usuario1: usr1, usuario2: usr2 });
+            res.send({ res: 'true' });
+        }
+        else{
+            res.send({ res: 'false' });
+        }
+    });
+});
+
+
 app.listen(port, () => {
     console.log(`Listening to requests on http://localhost:${port}`);
   });
