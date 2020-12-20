@@ -6,27 +6,22 @@ const path = require("path");
 const body_parser = require("body-parser");
 const cors = require('cors');
 const admin = require('firebase-admin');
-
 /**
  * App Variables
  */
 const app = express();
 const port = process.env.PORT || "8000";
 var serviceAccount = require('./infinachat-firebase-adminsdk-n6u87-8365e8e835.json'); 
-
 /**
  *  App Configuration
  */
 app.use(cors());	
 app.use(body_parser.urlencoded({ extended: false }));	
 app.use(body_parser.json());	
-
 admin.initializeApp({	
  credential: admin.credential.cert(serviceAccount)	
 });	
-
 const db = admin.firestore();
-
 /**
  * Routes Definitions
  */
@@ -34,7 +29,6 @@ const db = admin.firestore();
 app.get("/", (req, res) => {
     res.status(200).send("WHATABYTE: Food For Devs");
   });
-
 //getUsers
 app.get('/getUsers',(req,res) => {	
   let data = [];	
@@ -43,14 +37,12 @@ db.collection("users").get().
       snapshot.forEach((doc) => {	
           data.push(doc.data().username);	
       });	
-
           res.send(data);	
       })	
   .catch((err) => {	
       console.log("Error getting documents", err);	
   });	
 });
-
 //addUser
 app.post('/addUser',(req,res) => {
     const {usr,passwd} = req.body;
@@ -60,7 +52,6 @@ app.post('/addUser',(req,res) => {
         res.send({res: 'false'});
     });
 });
-
 //checa si coincide usr y pass
 //login
 app.post('/login',(req,res) => {
@@ -79,7 +70,6 @@ app.post('/login',(req,res) => {
         console.log("Error getting documents", err);
     });
   });
-
 //devuelve los chats que tenga el usuario dado
 //chats
 app.post('/chats',(req,res) => {
@@ -98,7 +88,6 @@ db.collection("chat").get().
       console.log("Error getting documents", err);
   });
 });
-
 //devuelve todos los mensajes de un chat dado un id_chat
 //getMensajes
 app.post('/getMensajes',(req,res) => {
@@ -137,24 +126,46 @@ app.post('/addMensaje',(req,res) => {
   });
 });
 
-router.post('/addChat', (req, res) => {
-    const { usr1, usr2 } = req.body;
-    let band = true;
-    db.collection("chat").get().then((snapshot) => {
-        snapshot.forEach((doc) => {
-            if (doc.idchat == usr1 + ',' + usr2 || doc.idchat == usr2 + ',' + usr1)
-                band = false;
-        });
-        if (band) {
-            db.collection('chat').add({ idchat: usr1 + ',' + usr2, usuario1: usr1, usuario2: usr2 });
-            res.send({ res: 'true' });
-        }
-        else{
-            res.send({ res: 'false' });
-        }
-    });
-
-
+//elimina msj
+app.post('/deleteMsj',(req,res) => {
+  const {id, idm} = req.body;
+  let band = false;
+db.collection("mensajes").get().
+  then((snapshot) => {
+      snapshot.forEach((doc) => {
+          if (doc.data().idchat == id && doc.data().idmsj == idm) {
+            //doc.data().tipo = "Eliminado";
+            doc.data().tipo = 'Eliminado';
+            //doc.data().contenido = "Este mensaje ha sido eliminado";
+            doc.data().contenido = 'Este mensaje ha sido eliminado';
+            band = true;
+          }
+      });
+          res.send({res: band}); //manda un true si se logro eliminar el msj
+      })
+  .catch((err) => {
+      console.log("Error getting documents", err);
+  });
+});
+//cambia password
+app.post('/changePass',(req,res) => {
+  const {usr, oldpass, npass} = req.body;
+  let band = false;
+db.collection("mensajes").get().
+  then((snapshot) => {
+      snapshot.forEach((doc) => {
+          if (doc.data().username == usr && doc.data().password == oldpass) {
+            doc.data().password = npass;
+            band = true;
+          }
+      });
+          res.send({res: band}); //manda un true si se logro cambiar la contra
+      })
+  .catch((err) => {
+      console.log("Error getting documents", err);
+  });
+});
+//elimina usuario
 /**
  * Server Activation
  */
