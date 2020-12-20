@@ -137,48 +137,23 @@ app.post('/addMensaje',(req,res) => {
   });
 });
 
-//elimina msj
-app.post('/deleteMsj',(req,res) => {
-  const {id, idm} = req.body;
-  let band = false;
-db.collection("mensajes").get().
-  then((snapshot) => {
-      snapshot.forEach((doc) => {
-          if (doc.data().idchat == id && doc.data().idmsj == idm) {
-            //doc.data().tipo = "Eliminado";
-            doc.data().tipo = 'Eliminado';
-            //doc.data().contenido = "Este mensaje ha sido eliminado";
-            doc.data().contenido = 'Este mensaje ha sido eliminado';
-            band = true;
-          }
-      });
-          res.send({res: band}); //manda un true si se logro eliminar el msj
-      })
-  .catch((err) => {
-      console.log("Error getting documents", err);
-  });
+router.post('/addChat', (req, res) => {
+    const { usr1, usr2 } = req.body;
+    let band = true;
+    db.collection("chat").get().then((snapshot) => {
+        snapshot.forEach((doc) => {
+            if (doc.idchat == usr1 + ',' + usr2 || doc.idchat == usr2 + ',' + usr1)
+                band = false;
+        });
+        if (band) {
+            db.collection('chat').add({ idchat: usr1 + ',' + usr2, usuario1: usr1, usuario2: usr2 });
+            res.send({ res: 'true' });
+        }
+        else{
+            res.send({ res: 'false' });
+        }
+    });
 });
-
-//cambia password
-app.post('/changePass',(req,res) => {
-  const {usr, oldpass, npass} = req.body;
-  let band = false;
-db.collection("mensajes").get().
-  then((snapshot) => {
-      snapshot.forEach((doc) => {
-          if (doc.data().username == usr && doc.data().password == oldpass) {
-            doc.data().password = npass;
-            band = true;
-          }
-      });
-          res.send({res: band}); //manda un true si se logro cambiar la contra
-      })
-  .catch((err) => {
-      console.log("Error getting documents", err);
-  });
-});
-
-//elimina usuario
 
 
 /**
