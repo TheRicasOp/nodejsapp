@@ -153,7 +153,6 @@ router.post('/addChat', (req, res) => {
             res.send({ res: 'false' });
         }
     });
-});
 
 
 /**
